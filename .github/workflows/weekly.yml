@@ -2,7 +2,7 @@ name: Weekly AI Papers
 
 on:
   schedule:
-    - cron: '0 2 * * 1'
+    - cron: '0 10 * * 1'   # 每周一 10:00
   workflow_dispatch:
 
 jobs:
@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+      - name: Install packages
+        run: pip install requests feedparser openai
 
-      - name: Run script
+      - name: Run AI radar
         env:
-          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-        run: |
-          python script.py
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python weekly_ai.py
