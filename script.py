@@ -2,17 +2,18 @@ import requests
 import feedparser
 import os
 
-WEBHOOK = os.environ["FEISHU_WEBHOOK"]
+WEBHOOK = os.environ.get("FEISHU_WEBHOOK")
 
-feed = feedparser.parse("https://arxiv.org/rss/cs.AI")
+feed = feedparser.parse("https://export.arxiv.org/rss/cs.AI")
 
-papers = feed.entries[:5]
+papers = []
 
-text = "🚀 本周AI论文精选\n\n"
+for entry in feed.entries[:5]:
+    title = entry.title
+    link = entry.link
+    papers.append(f"- {title}\n{link}")
 
-for p in papers:
-    text += f"📄 {p.title}\n"
-    text += f"{p.link}\n\n"
+text = "📚 本周 AI 新论文\n\n" + "\n\n".join(papers)
 
 data = {
     "msg_type": "text",
